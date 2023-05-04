@@ -227,16 +227,8 @@ def bond(maturity_date=None, freq='A', face_value=None,
                                             index = [counter])
                         counter += 1
 
-                        if result is None:
-                            result = aux
-                        else:
-                            result = result.append(aux, ignore_index=True)
-
-
-        if len(result) == 1:
-            return np.asscalar(result['Value'])
-        return result
-
+                        result = aux if result is None else result.append(aux, ignore_index=True)
+        return np.asscalar(result['Value']) if len(result) == 1 else result
     ## ytm is unknown
     if ytm is None:
 
@@ -267,17 +259,8 @@ def bond(maturity_date=None, freq='A', face_value=None,
 
                         counter += 1
 
-                        if result is None:
-                            result = aux
-                        else:
-                            result = result.append(aux, ignore_index=True)
-
-        if len(result) == 1:
-            return np.asscalar(result['YTM'])
-        return result
-
-
-
+                        result = aux if result is None else result.append(aux, ignore_index=True)
+        return np.asscalar(result['YTM']) if len(result) == 1 else result
     #
     # value and ytm are not None
     # sensibility analysis
@@ -314,12 +297,7 @@ def bond(maturity_date=None, freq='A', face_value=None,
 
                         counter += 1
 
-                        if result is None:
-                            result = aux
-                        else:
-                            result = result.append(aux, ignore_index=True)
-
-
+                        result = aux if result is None else result.append(aux, ignore_index=True)
     return result
 
 

@@ -122,11 +122,7 @@ def depreciation_sl(costs, life, salvalue=None):
                 break
 
     for time, _ in enumerate(depr):
-        if time > 0:
-            adepr[time] = adepr[time - 1] + depr[time]
-        else:
-            adepr[time] = depr[time]
-
+        adepr[time] = adepr[time - 1] + depr[time] if time > 0 else depr[time]
     for time, _ in enumerate(depr):
         if time > 0:
             begbook[time] = endbook[time - 1] + costs[time]
@@ -140,8 +136,7 @@ def depreciation_sl(costs, life, salvalue=None):
                           'End_Book': endbook})
 
     table = table[['Beg_Book', 'Depr', 'Accum_Depr', 'End_Book']]
-    table = table.round(2)
-    return table
+    return table.round(2)
 
 
 
@@ -237,11 +232,7 @@ def depreciation_soyd(costs, life, salvalue=None):
                 break
 
     for time, _ in enumerate(depr):
-        if time > 0:
-            adepr[time] = adepr[time - 1] + depr[time]
-        else:
-            adepr[time] = depr[time]
-
+        adepr[time] = adepr[time - 1] + depr[time] if time > 0 else depr[time]
     for time, _ in enumerate(depr):
         if time > 0:
             begbook[time] = endbook[time - 1] + costs[time]
@@ -255,8 +246,7 @@ def depreciation_soyd(costs, life, salvalue=None):
                           'End_Book': endbook})
 
     table = table[['Beg_Book', 'Depr', 'Accum_Depr', 'End_Book']]
-    table = table.round(2)
-    return table
+    return table.round(2)
 
 
 
@@ -400,8 +390,7 @@ def depreciation_db(costs, life, salvalue=None, factor=1, convert_to_sl=True, de
                           'End_Book': endbook})
 
     table = table[['Beg_Book', 'Depr', 'Accum_Depr', 'End_Book']]
-    table = table.round(2)
-    return table
+    return table.round(2)
 
 
 

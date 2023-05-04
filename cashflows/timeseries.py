@@ -59,10 +59,10 @@ def period2pos(index, date):
         position (int): position of date in index.
 
     """
-    x = [i for i, elem in enumerate(index) if elem == date]
-    if x == []:
+    if x := [i for i, elem in enumerate(index) if elem == date]:
+        return x[0]
+    else:
         raise ValueError('Date does not exists: ' + date.__repr__())
-    return x[0]
 
 def verify_period_range(x):
     """ Verify if all time series in a list have the same timestamp.
@@ -82,7 +82,7 @@ def verify_period_range(x):
         if not isinstance(elem, pd.Series):
             raise ValueError('pandas.Series expected: ' + elem.__repr__())
         allTrue = all(x[0].axes[0] == elem.axes[0])
-        if allTrue is False:
+        if not allTrue:
             raise ValueError('Series with different period_range')
 
 
@@ -138,11 +138,9 @@ def textplot(cflo):
     maxval = max(abs(cflo))
     width = 20
 
-    txt = []
     txtrow = fmt_timeid.format("time") + fmt_header.format('value')
     txtrow += " +" + "-" * (width - 2) + "+" + "-" * (width - 2) + "+"
-    txt.append(txtrow)
-
+    txt = [txtrow]
     for value, timeid in zip(cflo, cflo.index.to_series().astype(str)):
 
         # if cflo.pyr == 1:
@@ -303,10 +301,7 @@ def cashflow(const_value=0, start=None, end=None, periods=None, freq='A', chgpts
     if isinstance(chgpts, dict):
         keys = sorted(chgpts.keys())
         for k in keys:
-            if isinstance(k, int):
-                x = time_series.axes[0][k]
-            else:
-                x = k
+            x = time_series.axes[0][k] if isinstance(k, int) else k
             time_series[x] = chgpts[k]
 
     return time_series
@@ -408,10 +403,7 @@ def interest_rate(const_value=0, start=None, end=None, periods=None, freq='A', c
     if isinstance(chgpts, dict):
         keys = sorted(chgpts.keys())
         for k in keys:
-            if isinstance(k, int):
-                x = time_series.axes[0][k]
-            else:
-                x = k
+            x = time_series.axes[0][k] if isinstance(k, int) else k
             for t in time_series.axes[0]:
                 if t >= pd.Period(x, freq=freq):
                     time_series[t] = chgpts[k]

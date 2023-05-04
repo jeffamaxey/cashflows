@@ -112,13 +112,15 @@ def savings(deposits, nrate, initbal=0):
                 deposits[time] = -(begbal[time] + interest[time])
             endbal[time] = begbal[time] + deposits[time] + interest[time]
 
-    table = pd.DataFrame({'Beginning_Balance' : begbal,
-                          'Deposits' : deposits,
-                          'Nominal_Rate':nrate,
-                          'Earned_Interest': interest,
-                          'Ending_Balance': endbal })
-
-    return table
+    return pd.DataFrame(
+        {
+            'Beginning_Balance': begbal,
+            'Deposits': deposits,
+            'Nominal_Rate': nrate,
+            'Earned_Interest': interest,
+            'Ending_Balance': endbal,
+        }
+    )
 
 
 if __name__ == "__main__":

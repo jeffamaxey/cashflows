@@ -154,11 +154,7 @@ def tvmm(pval=None, fval=None, pmt=None, nrate=None, nper=None, due=0, pyr=1, no
 
     """
 
-    #pylint: disable=too-many-arguments
-    #pylint: disable=too-many-branches
-
-    numnone = 0
-    numnone += 1 if pval is None else 0
+    numnone = 0 + (1 if pval is None else 0)
     numnone += 1 if fval is None else 0
     numnone += 1 if nper is None else 0
     numnone += 1 if pmt is None else 0
@@ -187,11 +183,7 @@ def tvmm(pval=None, fval=None, pmt=None, nrate=None, nper=None, due=0, pyr=1, no
         result = numpy.rate(pv=pval, nper=nper, fv=fval, pmt=pmt, when=due) * 100 * pyr
 
     if noprint is True:
-        if isinstance(result, numpy.ndarray):
-            return result.tolist()
-        return result
-
-
+        return result.tolist() if isinstance(result, numpy.ndarray) else result
     nrate = nrate.tolist()
 
     if pval is None:
@@ -232,18 +224,13 @@ def tvmm(pval=None, fval=None, pmt=None, nrate=None, nper=None, due=0, pyr=1, no
         print('Periodic Rate: ......  {:8.2f}'.format(prate))
 
     else:
+        txtpmt = []
         if due == 0:
             sdue = 'END'
-            txtpmt = []
-            for item, _ in enumerate(pval):
-                txtpmt.append(pmt[item][-1])
+            txtpmt.extend(pmt[item][-1] for item, _ in enumerate(pval))
         else:
             sdue = 'BEG'
-            txtpmt = []
-            for item, _ in enumerate(pval):
-                txtpmt.append(pmt[item][0])
-
-
+            txtpmt.extend(pmt[item][0] for item, _ in enumerate(pval))
         maxlen = 5
         for value1, value2, value3, value4 in zip(pval, fval, txtpmt, nper):
             maxlen = max(maxlen, len('{:1.2f}'.format(value1)))
@@ -529,11 +516,7 @@ def amortize(pval=None, fval=None, pmt=None, nrate=None, nper=None, due=0, pyr=1
 
     """
 
-    #pylint: disable=too-many-arguments
-
-
-    numnone = 0
-    numnone += 1 if pval is None else 0
+    numnone = 0 + (1 if pval is None else 0)
     numnone += 1 if fval is None else 0
     numnone += 1 if nper is None else 0
     numnone += 1 if pmt is None else 0
@@ -602,17 +585,15 @@ def amortize(pval=None, fval=None, pmt=None, nrate=None, nper=None, due=0, pyr=1
            '          Amount       Amount                                 Amount',
            '--------------------------------------------------------------------']
 
-    for time in range(nper + 1):
-
-        fmt = '{:<3d} {:12.2f} {:12.2f} {:12.2f} {:12.2f} {:12.2f}'
+    fmt = '{:<3d} {:12.2f} {:12.2f} {:12.2f} {:12.2f} {:12.2f}'
 
 
-        txt.append(fmt.format(time,
-                              begbal[time],
-                              pmt[time],
-                              ipmt[time],
-                              ppmt[time],
-                              rembal[time]))
+    txt.extend(
+        fmt.format(
+            time, begbal[time], pmt[time], ipmt[time], ppmt[time], rembal[time]
+        )
+        for time in range(nper + 1)
+    )
     print('\n'.join(txt))
     return None
 

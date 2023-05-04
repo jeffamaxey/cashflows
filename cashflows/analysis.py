@@ -71,9 +71,7 @@ def irr(cflo):
     retval = pd.Series([0] * len(cflo), dtype=np.float64)
     for index, xcflo in enumerate(cflo):
         retval[index] = 100 * np.irr(xcflo)
-    if len(retval) == 1:
-        return retval[0]
-    return retval
+    return retval[0] if len(retval) == 1 else retval
 
 
 ## modified internal rate of return
@@ -110,9 +108,7 @@ def mirr(cflo, finance_rate=0, reinvest_rate=0):
     for index, xcflo in enumerate(cflo):
         retval[index] = 100 * np.mirr(xcflo, finance_rate, reinvest_rate)
 
-    if len(retval) == 1:
-        return retval[0]
-    return retval
+    return retval[0] if len(retval) == 1 else retval
 
 
 def timevalue(cflo, prate, base_date=0, utility=None):
@@ -172,13 +168,9 @@ def timevalue(cflo, prate, base_date=0, utility=None):
     retval = pd.Series([0] * len(cflo), dtype=np.float64)
     factor = to_discount_factor(prate=prate, base_date=base_date)
     for index, xcflo in enumerate(cflo):
-        netval = 0
-        for time, _ in enumerate(xcflo):
-            netval += xcflo[time] * factor[time]
+        netval = sum(xcflo[time] * factor[time] for time, _ in enumerate(xcflo))
         retval[index] = netval
-    if len(retval) == 1:
-        return retval[0]
-    return retval
+    return retval[0] if len(retval) == 1 else retval
 
 
 def net_uniform_series(cflo, prate, nper=1):
@@ -225,9 +217,7 @@ def net_uniform_series(cflo, prate, nper=1):
     for index, xcflo in enumerate(cflo):
         netval = timevalue(cflo=xcflo, prate=prate, base_date=0)
         retval[index] = -tvmm(nrate=erate, nper=nper, pval=netval, fval=0, pmt=None)
-    if len(retval) == 1:
-        return retval[0]
-    return retval
+    return retval[0] if len(retval) == 1 else retval
 
 
 def benefit_cost_ratio(cflo, prate, base_date=0):
@@ -282,9 +272,7 @@ def benefit_cost_ratio(cflo, prate, base_date=0):
         retval[index] = -timevalue(num, prate, base_date) / timevalue(
             den, prate, base_date
         )
-    if len(retval) == 1:
-        return retval[0]
-    return retval
+    return retval[0] if len(retval) == 1 else retval
 
 
 if __name__ == "__main__":

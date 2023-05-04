@@ -18,9 +18,7 @@ def getpyr(x):
         return 2
     if x.axes[0].freq in ['Q', 'BQ']:
         return 4
-    if x.axes[0].freq in ['M', 'BM', 'CBM']:
-        return 12
-    return 24 # 'freq = "SM"'
+    return 12 if x.axes[0].freq in ['M', 'BM', 'CBM'] else 24
 
 
 

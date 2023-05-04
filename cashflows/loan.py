@@ -75,14 +75,15 @@ class Loan(pd.DataFrame):
 
 
     def __str__(self):
-        str = []
-        str.append("Amount:             {:.2f}".format(self.amount))
-        str.append("Total interest:     {:.2f}".format(sum(self.Int_Payment)))
-        str.append("Total payment:      {:.2f}".format(sum(self.Tot_Payment)))
-        str.append("Discount points:    {:.2f}".format(self.dispoints))
-        str.append("Origination points: {:.2f}".format(self.orgpoints))
+        str = [
+            "Amount:             {:.2f}".format(self.amount),
+            "Total interest:     {:.2f}".format(sum(self.Int_Payment)),
+            "Total payment:      {:.2f}".format(sum(self.Tot_Payment)),
+            "Discount points:    {:.2f}".format(self.dispoints),
+            "Origination points: {:.2f}".format(self.orgpoints),
+        ]
         str = '\n'.join(str) + '\n\n'
-        str = str + super().__str__()
+        str += super().__str__()
         return str
 
 
@@ -764,29 +765,25 @@ def buydown_loan(amount, nrate, grace=0, dispoints=0, orgpoints=0, prepmt=None):
             totpmt[time] = amount * (dispoints + orgpoints) / 100
             ### intpmt[time] = amount * dispoints / 100
             #
+        elif time <= grace:
+
+            begppalbal[time] = endppalbal[time - 1]
+            intpmt[time] = begppalbal[time] * nrate[time] / pyr / 100
+            totpmt[time] = intpmt[time]
+            endppalbal[time] = begppalbal[time]
+
         else:
-            #
-            # periodic payment per period
-            #
-            if time <= grace:
 
-                begppalbal[time] = endppalbal[time - 1]
-                intpmt[time] = begppalbal[time] * nrate[time] / pyr / 100
-                totpmt[time] = intpmt[time]
-                endppalbal[time] = begppalbal[time]
+            pmt = -pvpmt(nrate=nrate[time], nper=grace+life-time+1,
+                         pval=endppalbal[time-1], pmt=None, pyr=pyr)
 
-            else:
+            totpmt[time] = pmt + prepmt[time]
 
-                pmt = -pvpmt(nrate=nrate[time], nper=grace+life-time+1,
-                             pval=endppalbal[time-1], pmt=None, pyr=pyr)
-
-                totpmt[time] = pmt + prepmt[time]
-
-                # balance
-                begppalbal[time] = endppalbal[time - 1]
-                intpmt[time] = begppalbal[time] * nrate[time] / pyr / 100
-                ppalpmt[time] = totpmt[time] - intpmt[time]
-                endppalbal[time] = begppalbal[time] - ppalpmt[time]
+            # balance
+            begppalbal[time] = endppalbal[time - 1]
+            intpmt[time] = begppalbal[time] * nrate[time] / pyr / 100
+            ppalpmt[time] = totpmt[time] - intpmt[time]
+            endppalbal[time] = begppalbal[time] - ppalpmt[time]
 
 
     data = {'Beg_Ppal_Amount':begppalbal}
